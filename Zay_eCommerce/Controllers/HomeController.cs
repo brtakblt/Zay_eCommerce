@@ -1,0 +1,59 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using System.Text.Json;
+using Zay_eCommerce.Models;
+
+namespace Zay_eCommerce.Controllers
+{
+    public class HomeController : Controller
+    {
+        public IActionResult Index()
+        {
+            return View();
+        }
+        public IActionResult About()
+        {
+            return View();
+        }
+
+
+        public async Task<IActionResult> ShopSingle(int id)
+        {
+            ViewBag.ProductId = id;
+            return View();
+        }
+
+        private readonly HttpClient _httpClient;
+
+        public HomeController(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient();
+        }
+
+        public async Task<IActionResult> Shop()
+        {
+
+            var response = await _httpClient.GetAsync("http://localhost:5104/api/Products");
+
+
+            if (!response.IsSuccessStatusCode)
+                return View(new List<ProductListViewModel>());
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var products = JsonSerializer.Deserialize<List<ProductListViewModel>>(
+                json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+
+            return View(products);
+
+        }
+
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
+   
+    }
+}
