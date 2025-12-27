@@ -19,8 +19,27 @@ namespace Zay_eCommerce.Controllers
 
         public async Task<IActionResult> ShopSingle(int id)
         {
-            ViewBag.ProductId = id;
-            return View();
+
+            var response = await _httpClient.GetAsync($"http://localhost:5104/api/Products/{id}");
+
+            if (!response.IsSuccessStatusCode)
+                return NotFound();
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var product = JsonSerializer.Deserialize<ProductDetailViewModel>(
+                json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+
+            product.Images = new List<string>
+            {
+                product.ProductImage
+            };
+
+            return View(product);
+
         }
 
         private readonly HttpClient _httpClient;
@@ -41,11 +60,13 @@ namespace Zay_eCommerce.Controllers
 
             var json = await response.Content.ReadAsStringAsync();
 
-            var products = JsonSerializer.Deserialize<List<ProductListViewModel>>(
+            var product = JsonSerializer.Deserialize<List<ProductListViewModel>>(
                 json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
 
-            return View(products);
+         
+
+            return View(product);
 
         }
 

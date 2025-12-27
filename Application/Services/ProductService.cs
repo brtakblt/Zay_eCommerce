@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.DTOs.Product;
 using Application.Interfaces;
+using Domain.Entities;
 
 namespace Application.Services
 {
@@ -29,6 +30,11 @@ namespace Application.Services
                 Name = p.ProductName,
                 ProductImage = p.ProductImage
             }).ToList();
+        }
+
+        public async Task<Product?> GetByIdAsync(int id)
+        {
+            return await _productRepository.GetByIdAsync(id);
         }
 
     }

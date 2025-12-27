@@ -23,5 +23,10 @@ namespace Infrastructure.Repositories
         {
             return await _context.products.ToListAsync();
         }
+
+        public async Task<Product?> GetByIdAsync(int id)
+        {
+            return await _context.products.FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }
